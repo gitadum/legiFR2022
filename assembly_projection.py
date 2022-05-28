@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from numpy import mean
 import poli_sci_kit
 
-parl_group = ["PCF","LFI","PS","EELV","Ens.","LR","DLF","RN","Req.","Miscel."]
+parl_group = ["PCF","LFI","PS","EELV","Ens.","LR","DLF","RN","Req.","Others"]
 groupColor = ['red', 'firebrick', 'salmon', 'limegreen', 'orange', 
               'royalblue', 'blueviolet', 'navy', 'saddlebrown', 'lightgray']
 
@@ -53,7 +53,9 @@ poli_sci_kit.plot.parliament(
 
 ax.legend(["{g} : {s}".format(g=group, s=seat)
            for group, seat in zip(parl_group, seat_alloc)])
+ax.text(0,-1,'source: Harris Interactive, May 23rd, 2022', fontsize=12)
 ax.set_title("Polls - France: 2022 Legislative elections - seat projections")
+
 fig.tight_layout()
 
 plt.show()
