@@ -8,15 +8,16 @@ from numpy import mean
 import poli_sci_kit
 import json
  
-df = pd.read_csv('data.csv', header=0, index_col=['Polling firm', 'Date'])
+df = pd.read_csv('data.csv', header=0, index_col=['Polling firm', 'Date'],
+                 parse_dates=['Date'])
 with open('group_colors.json', 'r') as color_file:
     colors = json.load(color_file)
 
 poll = df.groupby(['Polling firm','Date']).mean()
 poll = poll.apply(lambda x: round(x / poll.sum(axis=1) * 577, 0))
 
-Pollster = "OpinionWay"
-Date = "2022-05-24"
+Pollster = "Harris Interactive"
+Date = "2022-05-23"
 
 selected_poll = poll.loc[(Pollster, Date)]
 parl_group = list(df.columns)
@@ -39,21 +40,23 @@ seat_alloc = list(filter(lambda x: x != 0, seat_alloc))
 
 fig, ax = plt.subplots(figsize=(8,6))
 
-poli_sci_kit.plot.parliament(
-    allocations=seat_alloc,
-    labels=parl_group,
-    colors=[mpl.colors.cnames[c] for c in groupColor],
-    style="semicircle",
-    num_rows=10,
-    marker_size=120,
-    speaker=False,
-    axis=ax)
+if __name__ == "__main__":
 
-ax.legend(["{g} : {s}".format(g=group, s=seat)
-           for group, seat in zip(parl_group, seat_alloc)])
-ax.text(0,-1,'source: {p}, {d}'.format(p=Pollster, d=Date), fontsize=12)
-ax.set_title("Polls - France: 2022 Legislative elections - seat projections")
+    poli_sci_kit.plot.parliament(
+        allocations=seat_alloc,
+        labels=parl_group,
+        colors=[mpl.colors.cnames[c] for c in groupColor],
+        style="semicircle",
+        num_rows=10,
+        marker_size=120,
+        speaker=False,
+        axis=ax)
 
-fig.tight_layout()
+    ax.legend(["{g} : {s}".format(g=group, s=seat)
+            for group, seat in zip(parl_group, seat_alloc)])
+    ax.text(0,-1,'source: {p}, {d}'.format(p=Pollster, d=Date), fontsize=12)
+    ax.set_title("Polls - France: 2022 Legislative elections - seat projections")
 
-plt.show()
+    fig.tight_layout()
+
+    plt.show()
