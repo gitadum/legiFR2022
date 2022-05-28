@@ -21,6 +21,7 @@ if COALITIONS_ENABLED:
     df_cp = enable_coalitions(df_cp)
 print(df_cp)
 print(colors.values())
-sns.lineplot(data=df_cp, palette=colors.values())
+sns.lineplot(data=df_cp, palette=colors.values(), ax=ax)
+ax.legend(loc='upper left')
 plt.show()
 quit()
