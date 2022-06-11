@@ -4,7 +4,7 @@
 from datetime import date
 import matplotlib.pyplot as plt
 import seaborn as sns
-from assembly_projection import *
+from assembly_seatProjection import *
 
 def enable_coalitions(df):
     df.loc[df['NUPES'] == 0, 'NUPES'] = df['PCF']+df['LFI']+df['PS']+df['EELV']
