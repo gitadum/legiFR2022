@@ -32,5 +32,6 @@ for ax in plot.axes.flat:
     ax.set_xticklabels(new_labels, rotation=90) # set new labels
 plt.legend(loc='upper right')
 plt.tight_layout()
+plt.savefig('Figure_1.png')
 plt.show()
 quit()
