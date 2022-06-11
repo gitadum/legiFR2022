@@ -3,9 +3,13 @@
 "PS"    : "salmon",
 "EELV"  : "limegreen",
 "NUPES" : "crimson",
+"DVG"   : "lightpink",
+"DVC"   : "gold",
 "Ens."  : "orange",
 "LR"    : "royalblue",
+"DVD"   : "dodgerblue",
 "DLF"   : "blueviolet",
 "RN"    : "navy",
 "Req."  : "saddlebrown",
+"DVED"  : "sienna",
 "Others": "lightgrey"}
