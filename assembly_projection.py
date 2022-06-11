@@ -16,10 +16,20 @@ with open('group_colors.json', 'r') as color_file:
 poll = df.groupby(['Polling firm','Date']).mean()
 poll = poll.apply(lambda x: round(x / poll.sum(axis=1) * 577, 0))
 
-Pollster = "Harris Interactive"
-Date = "2022-05-23"
+Pollster = "Ipsos"
+Date = "2022-06-10"
+SPLIT_NUPES = True
+
+if SPLIT_NUPES:
+    nupesSeats = poll.loc[poll['NUPES'] != 0, 'NUPES']
+    poll.loc[poll['NUPES'] != 0, 'PCF'] = nupesSeats.apply(lambda x: round(.1*x))
+    poll.loc[poll['NUPES'] != 0, 'LFI'] = nupesSeats.apply(lambda x: round(.5*x))
+    poll.loc[poll['NUPES'] != 0, 'PS'] = nupesSeats.apply(lambda x: round(.2*x))
+    poll.loc[poll['NUPES'] != 0, 'EELV'] = nupesSeats.apply(lambda x: round(.2*x))
+    poll.loc[poll['NUPES'] != 0, 'NUPES'] = 0.0
 
 selected_poll = poll.loc[(Pollster, Date)]
+
 parl_group = list(df.columns)
 groupColor = list(colors.values())
 seat_alloc = [int(n) for n in selected_poll.values]
@@ -38,9 +48,10 @@ parl_group = [parl_group[i] for i in range(len(parl_group)) if i not in zeroSeat
 groupColor = [groupColor[i] for i in range(len(groupColor)) if i not in zeroSeat]
 seat_alloc = list(filter(lambda x: x != 0, seat_alloc))
 
-fig, ax = plt.subplots(figsize=(8,6))
 
 if __name__ == "__main__":
+
+    fig, ax = plt.subplots(figsize=(8,6))
 
     poli_sci_kit.plot.parliament(
         allocations=seat_alloc,
