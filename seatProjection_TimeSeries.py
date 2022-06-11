@@ -1,6 +1,7 @@
 #! ./envs/bin/python3
 # -*-coding: utf-8-*-
 
+from datetime import date
 import matplotlib.pyplot as plt
 import seaborn as sns
 from assembly_projection import *
@@ -14,14 +15,22 @@ def enable_coalitions(df):
 
 COALITIONS_ENABLED = True
 
-df_cp = poll.reset_index()
-df_cp.drop(columns=['Polling firm'], inplace=True)
-df_cp.set_index('Date', inplace=True)
 if COALITIONS_ENABLED:
-    df_cp = enable_coalitions(df_cp)
-print(df_cp)
-print(colors.values())
-sns.lineplot(data=df_cp, palette=colors.values(), ax=ax)
-ax.legend(loc='upper left')
+    poll = enable_coalitions(poll)
+
+tab = poll.stack().reset_index().rename(columns={'level_2': 'party', 0: 'numSeats'})
+tab['Date'] = pd.to_datetime(tab['Date']).apply(lambda date: date.toordinal())
+
+sns.set_theme()
+plot = sns.lmplot(data=tab, x='Date', y='numSeats', hue="party", palette=colors,
+                  height=9, aspect=1.5, legend=False)
+# iterate through the axes of the figure-level plot
+for ax in plot.axes.flat:
+    labels = ax.get_xticks() # get x labels
+    new_labels = [date.fromordinal(int(label)) for label in labels] # convert ordinal back to datetime
+    ax.set_xticks(labels)
+    ax.set_xticklabels(new_labels, rotation=90) # set new labels
+plt.legend(loc='upper right')
+plt.tight_layout()
 plt.show()
 quit()
