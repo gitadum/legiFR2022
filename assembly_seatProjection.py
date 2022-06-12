@@ -4,7 +4,6 @@
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from numpy import mean
 import poli_sci_kit
 import json
  
@@ -13,32 +12,39 @@ df = pd.read_csv('data.csv', header=0, index_col=['Polling firm', 'Date'],
 with open('group_colors.json', 'r') as color_file:
     colors = json.load(color_file)
 
-poll = df.groupby(['Polling firm','Date']).mean()
+poll = df.groupby(['Date','Polling firm']).mean()
 poll = poll.apply(lambda x: round(x / poll.sum(axis=1) * 577, 0))
 
-Pollster = "Ipsos"
 Date = "2022-06-10"
+Pollster = "Ipsos"
+
 SPLIT_NUPES = True
 
-if SPLIT_NUPES:
-    nupesSeats = poll.loc[poll['NUPES'] != 0, 'NUPES']
-    poll.loc[poll['NUPES'] != 0, 'PCF'] = nupesSeats.apply(lambda x: round(.1*x))
-    poll.loc[poll['NUPES'] != 0, 'LFI'] = nupesSeats.apply(lambda x: round(.5*x))
-    poll.loc[poll['NUPES'] != 0, 'PS'] = nupesSeats.apply(lambda x: round(.2*x))
-    poll.loc[poll['NUPES'] != 0, 'EELV'] = nupesSeats.apply(lambda x: round(.2*x))
-    poll.loc[poll['NUPES'] != 0, 'NUPES'] = 0.0
+def splitCoalitions(df):
+    nupesSeats = df.loc[df['NUPES'] != 0, 'NUPES']
+    df.loc[df['NUPES'] != 0, 'PCF'] = nupesSeats.apply(lambda x: round(.1*x))
+    df.loc[df['NUPES'] != 0, 'LFI'] = nupesSeats.apply(lambda x: round(.5*x))
+    df.loc[df['NUPES'] != 0, 'PS'] = nupesSeats.apply(lambda x: round(.2*x))
+    df.loc[df['NUPES'] != 0, 'EELV'] = nupesSeats.apply(lambda x: round(.2*x))
+    df.loc[df['NUPES'] != 0, 'NUPES'] = 0.0
+    return df
 
-selected_poll = poll.loc[(Pollster, Date)]
+if SPLIT_NUPES:
+    splitCoalitions(poll)
+
+selected_poll = poll.loc[(Date, Pollster)]
 
 parl_group = list(df.columns)
 groupColor = list(colors.values())
 seat_alloc = [int(n) for n in selected_poll.values]
 
+# Check that group names, number of seats & group color lists are of equal length
 try:
     assert len(parl_group) == len(groupColor) == len(seat_alloc)
 except AssertionError:
     print(len(parl_group), len(groupColor), len(seat_alloc))
 
+# Remove political groups with zero seat for clarity purposes
 zeroSeat = []
 for i in range(len(seat_alloc)):
     if seat_alloc[i] == 0:
@@ -69,5 +75,5 @@ if __name__ == "__main__":
     ax.set_title("Polls - France: 2022 Legislative elections - seat projections")
 
     fig.tight_layout()
-
+    fig.savefig("Figure_1.png")
     plt.show()
