@@ -30,7 +30,7 @@ for ax in plot.axes.flat:
     new_labels = [date.fromordinal(int(label)) for label in labels] # convert ordinal back to datetime
     ax.set_xticks(labels)
     ax.set_xticklabels(new_labels, rotation=90) # set new labels
-plt.legend(loc='upper right', bbox_to_anchor=(1.2,1))
+plt.legend(loc='upper right', bbox_to_anchor=(1.125, 1))
 plt.tight_layout()
 plt.savefig('Figure_2.png')
 plt.show()
