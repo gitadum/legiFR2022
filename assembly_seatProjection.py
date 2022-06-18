@@ -3,10 +3,10 @@
 
 import pandas as pd
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import poli_sci_kit
 import json
- 
+from styles import *
+
 df = pd.read_csv('data.csv', header=0, index_col=['Polling firm', 'Date'],
                  parse_dates=['Date'])
 with open('group_colors.json', 'r') as color_file:
@@ -15,7 +15,7 @@ with open('group_colors.json', 'r') as color_file:
 poll = df.groupby(['Date','Polling firm']).mean()
 poll = poll.apply(lambda x: round(x / poll.sum(axis=1) * 577, 0))
 
-Date = "2022-06-10"
+Date = "2022-06-16"
 Pollster = "Ipsos"
 
 SPLIT_NUPES = True
@@ -57,7 +57,8 @@ seat_alloc = list(filter(lambda x: x != 0, seat_alloc))
 
 if __name__ == "__main__":
 
-    fig, ax = plt.subplots(figsize=(8,6))
+    figsize = (16,9)
+    fig, ax = plt.subplots(figsize=figsize)
 
     poli_sci_kit.plot.parliament(
         allocations=seat_alloc,
@@ -65,14 +66,15 @@ if __name__ == "__main__":
         colors=[mpl.colors.cnames[c] for c in groupColor],
         style="semicircle",
         num_rows=10,
-        marker_size=120,
+        marker_size=200,
         speaker=False,
         axis=ax)
 
     ax.legend(["{g} : {s}".format(g=group, s=seat)
             for group, seat in zip(parl_group, seat_alloc)])
-    ax.text(0,-1,'source: {p}, {d}'.format(p=Pollster, d=Date), fontsize=12)
-    ax.set_title("Polls - France: 2022 Legislative elections - seat projections")
+    ax.text(figsize[0] * .5, -1, 'source: {p}, {d}'.format(p=Pollster, d=Date))
+    ax.set_title("Polls - France: 2022 Legislative elections - seat projections",
+                 **title_font)
 
     fig.tight_layout()
     fig.savefig("Figure_1.png")
