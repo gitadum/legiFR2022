@@ -1,5 +1,5 @@
-#! ./envs/bin/python3
-# -*-coding: utf-8-*-
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import pandas as pd
 import matplotlib as mpl
@@ -7,7 +7,8 @@ import poli_sci_kit
 import json
 from styles import *
 
-df = pd.read_csv('data.csv', header=0, index_col=['Polling firm', 'Date'],
+df = pd.read_csv('data/polls/seatProjections.csv',
+                 header=0, index_col=['Polling firm', 'Date'],
                  parse_dates=['Date'])
 with open('group_colors.json', 'r') as color_file:
     colors = json.load(color_file)
@@ -15,8 +16,8 @@ with open('group_colors.json', 'r') as color_file:
 poll = df.groupby(['Date','Polling firm']).mean()
 poll = poll.apply(lambda x: round(x / poll.sum(axis=1) * 577, 0))
 
-Date = "2022-06-16"
-Pollster = "Ipsos"
+Date = "2022-06-20"
+Pollster = "Official results - per group"
 
 SPLIT_NUPES = True
 
@@ -71,8 +72,8 @@ if __name__ == "__main__":
         axis=ax)
 
     ax.legend(["{g} : {s}".format(g=group, s=seat)
-            for group, seat in zip(parl_group, seat_alloc)])
-    ax.text(figsize[0] * .5, -1, 'source: {p}, {d}'.format(p=Pollster, d=Date))
+            for group, seat in zip(parl_group, seat_alloc)], loc=(.9,.6))
+    ax.text(figsize[0]*.25, -.75, 'source: {p}, {d}'.format(p=Pollster, d=Date))
     ax.set_title("Polls - France: 2022 Legislative elections - seat projections",
                  **title_font)
 
